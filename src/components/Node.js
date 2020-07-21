@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import colors from "../constants/colors";
 import { Paper, Subtitle, BodyText, Caption } from "material-bread";
 import { Expander } from "./Expander";
@@ -22,12 +22,18 @@ const Node = ({ node, expanded, toggleNodeExpanded }) => (
         color={colors.gray}
         style={styles.secondaryHeading}
       />
+      <Text style={{marginTop: 2 }}>{`Blocks for ${node.name}:`}</Text>
       <Expander expanded={expanded} style={styles.icon(expanded)} />
-      {expanded && (
-        <View style={styles.heading}>
-          <BodyText type={1} text={"Blocks go here"} />
-        </View>
-      )}
+      {expanded && node.blocks ?
+      node.blocks.map(node_item => {
+        return(
+          <View style={styles.heading}>
+            <Text style={({marginTop : 2, color:colors.gray },styles.secondaryHeading)}>
+              {`${node_item.attributes.index} - ${node_item.attributes.data}`}
+            </Text>
+          </View>
+        )
+      }): null}
     </Paper>
   </TouchableOpacity>
 );

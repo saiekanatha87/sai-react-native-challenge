@@ -14,10 +14,24 @@ const checkNodeStatusSuccess = (node, res) => {
     res
   };
 };
+const blocksSuccessFound = (node, res) => {
+  return {
+    type: types.BLOCKS_FOUND,
+    node,
+    res
+  };
+};
 
 const checkNodeStatusFailure = node => {
   return {
     type: types.CHECK_NODE_STATUS_FAILURE,
+    node
+  };
+};
+
+const checkBlockStatusFailure = node => {
+  return {
+    type: types.CHECK_BLOCKS_STATUS_FAILURE,
     node
   };
 };
@@ -38,6 +52,28 @@ export function checkNodeStatus(node) {
     } catch (err) {
       dispatch(checkNodeStatusFailure(node));
     }
+  };
+}
+
+export function checkBlocksStatus(node) { 
+  return  dispatch => {
+    {
+      node.map(async node_item => {
+    try {
+      const res = await fetch(`${node_item.url}/api/v1/blocks`);
+
+      if (res.status >= 400) {
+        dispatch(checkBlockStatusFailure(node));
+      }
+
+      const json = await res.json();
+
+      dispatch(blocksSuccessFound(node_item, json));
+    } catch (err) {
+      dispatch(checkBlockStatusFailure(node));
+    }
+  });
+}
   };
 }
 

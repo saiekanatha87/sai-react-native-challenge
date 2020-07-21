@@ -18,6 +18,7 @@ export class Nodes extends React.Component {
 
   componentDidMount() {
     this.props.actions.checkNodeStatuses(this.props.nodes.list);
+    this.props.actions.checkBlocksStatus(this.props.nodes.list);
   }
 
   toggleNodeExpanded(node) {
@@ -25,6 +26,8 @@ export class Nodes extends React.Component {
       expandedNodeURL: node.url === this.state.expandedNodeURL ? null : node.url
     });
   }
+
+  
 
   render() {
     const { nodes } = this.props;

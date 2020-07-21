@@ -2,6 +2,8 @@ import {
   CHECK_NODE_STATUS_START,
   CHECK_NODE_STATUS_SUCCESS,
   CHECK_NODE_STATUS_FAILURE,
+  BLOCKS_FOUND,
+  CHECK_BLOCKS_STATUS_FAILURE
 } from '../constants/actionTypes';
 import initialState from './initialState';
 
@@ -44,6 +46,24 @@ export default function nodesReducer(state = initialState().nodes, action) {
         ...state,
         list,
       };
+
+      case BLOCKS_FOUND: 
+      list = state.list;
+      nodeIndex = state.list.findIndex(p => p.url === action.node.url);
+      if (nodeIndex >= 0) {
+        list = [
+          ...state.list.slice(0, nodeIndex),
+          {
+            ...state.list[nodeIndex],
+            blocks: action.res.data
+          },
+          ...state.list.slice(nodeIndex + 1),
+        ];
+      }
+      return {
+        ...state,
+        list,
+      };
     case CHECK_NODE_STATUS_FAILURE:
       list = state.list;
       nodeIndex = state.list.findIndex(p => p.url === action.node.url);
@@ -62,6 +82,27 @@ export default function nodesReducer(state = initialState().nodes, action) {
         ...state,
         list,
       };
+
+      case CHECK_BLOCKS_STATUS_FAILURE:
+      list = state.list;
+      nodeIndex = state.list.findIndex(p => p.url === action.node.url);
+      if (nodeIndex >= 0) {
+        list = [
+          ...state.list.slice(0, nodeIndex),
+          {
+            ...state.list[nodeIndex],
+            online: false,
+            loading: false,
+            blocks: null
+          },
+          ...state.list.slice(nodeIndex + 1),
+        ];
+      }
+      return {
+        ...state,
+        list,
+      };
+
     default:
       return state;
   }
